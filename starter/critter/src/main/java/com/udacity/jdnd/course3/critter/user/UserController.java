@@ -1,8 +1,10 @@
 package com.udacity.jdnd.course3.critter.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,40 +17,102 @@ import java.util.Set;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
-        throw new UnsupportedOperationException();
+        Customer saved = customerService.saveCustomer(customerDTO);
+
+        CustomerDTO result = new CustomerDTO();
+        result.setId(saved.getId());
+        result.setName(saved.getName());
+        result.setPhoneNumber(saved.getPhoneNumber());
+        result.setPetIds(saved.getPetIds() != null ? new ArrayList<>(saved.getPetIds()) : null);
+        result.setNotes(saved.getNotes());
+
+        return result;
     }
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
-        throw new UnsupportedOperationException();
+        List<Customer> group = customerService.getAllCustomers();
+        List<CustomerDTO> dtoList = new ArrayList<>();
+        for (Customer customer : group) {
+            CustomerDTO dto = new CustomerDTO();
+            dto.setId(customer.getId());
+            dto.setName(customer.getName());
+            dto.setNotes(customer.getNotes());
+            dto.setPetIds(customer.getPetIds() != null ? new ArrayList<>(customer.getPetIds()) : null);
+            dto.setPhoneNumber(customer.getPhoneNumber());
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
     }
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
-        throw new UnsupportedOperationException();
+        Customer customer = customerService.getOwnerByPet(petId);
+        CustomerDTO dto = new CustomerDTO();
+
+        dto.setId(customer.getId());
+        dto.setName(customer.getName());
+        dto.setNotes(customer.getNotes());
+        dto.setPetIds(customer.getPetIds() != null ? new ArrayList<>(customer.getPetIds()) : null);
+        dto.setPhoneNumber(customer.getPhoneNumber());
+
+        return dto;
     }
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        throw new UnsupportedOperationException();
+        Employee saved = employeeService.saveEmployee(employeeDTO);
+
+        EmployeeDTO result = new EmployeeDTO();
+        result.setId(saved.getId());
+        result.setName(saved.getName());
+        result.setSkills(saved.getSkills());
+        result.setDaysAvailable(saved.getDaysAvailable());
+
+        return result;
     }
 
     @PostMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        Employee employee = employeeService.getEmployee(employeeId);
+        EmployeeDTO dto = new EmployeeDTO();
+        dto.setId(employee.getId());
+        dto.setName(employee.getName());
+        dto.setDaysAvailable(employee.getDaysAvailable());
+        dto.setSkills(employee.getSkills());
+
+        return dto;
     }
 
     @PutMapping("/employee/{employeeId}")
     public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        employeeService.setAvailability(daysAvailable, employeeId);
     }
 
     @GetMapping("/employee/availability")
-    public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        throw new UnsupportedOperationException();
-    }
+    public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeRequestDTO) {
+        List<Employee> available = employeeService.findEmployeesForService(employeeRequestDTO);
+        List<EmployeeDTO> candidates = new ArrayList<>(); 
+        for (Employee employee : available) {
+            EmployeeDTO dto = new EmployeeDTO();
+            dto.setDaysAvailable(employee.getDaysAvailable());
+            dto.setId(employee.getId());
+            dto.setName(employee.getName());
+            dto.setSkills(employee.getSkills());
 
+            candidates.add(dto);
+        }
+
+        return candidates;
+    }
 }

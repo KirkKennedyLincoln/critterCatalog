@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CritterController {
 
+    @GetMapping("/home")
+    public String home(){
+        return "Critter Starter installed successfully";
+    }
     @GetMapping("/test")
     public String test(){
         return "Critter Starter installed successfully";
