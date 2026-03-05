@@ -6,14 +6,15 @@ import java.util.Set;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 
 @Entity
 public class Employee extends User {
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name="employee_skills")
     private Set<EmployeeSkill> skills;
-   
-    @ElementCollection
+
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name="employee_availability")
     private Set<DayOfWeek> daysAvailable;
 

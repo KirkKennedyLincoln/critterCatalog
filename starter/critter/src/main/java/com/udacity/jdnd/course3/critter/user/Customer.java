@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 
 @Entity
 public class Customer extends User {
@@ -14,7 +15,7 @@ public class Customer extends User {
     @Column(name="customer_notes")
     private String notes;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name="customer_petids")
     private List<Long> petIds;
 

@@ -39,7 +39,7 @@ public class EmployeeService {
         Employee employee = employeeRepository
             .findById(employeeId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "EmployeeService: Availability not found"));
-        
+
         employee.setDaysAvailable(daysAvailable);
         employeeRepository.save(employee);
     }

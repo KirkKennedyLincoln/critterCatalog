@@ -79,7 +79,7 @@ public class ScheduleController {
 
             shifts.add(dto);
         }
-
+        
         return shifts;
     }
 

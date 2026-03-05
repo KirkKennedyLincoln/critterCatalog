@@ -7,19 +7,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class Pet {
     @Id
-    @GeneratedValue(
-        strategy = GenerationType.SEQUENCE,
-        generator = "customer-generator"
-    )
-    @SequenceGenerator(
-        name = "customer-generator",
-        sequenceName = "customer-sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Claude AI helped me understand what I was doing wrong here
     private Long id;
 
     @Column(name = "pet_type")
