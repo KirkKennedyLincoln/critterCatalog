@@ -1,8 +1,12 @@
 package com.udacity.jdnd.course3.critter.schedule;
 
+import com.udacity.jdnd.course3.critter.user.Employee;
+import com.udacity.jdnd.course3.critter.user.EmployeeRequestDTO;
+import com.udacity.jdnd.course3.critter.user.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +17,32 @@ import java.util.List;
 @RequestMapping("/schedule")
 public class ScheduleController {
     @Autowired
+    private final EmployeeService employeeService;
+
+    @Autowired
     private ScheduleService scheduleService;
+
+    ScheduleController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
     @PostMapping
     public ScheduleDTO createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
-        Schedule schedule = scheduleService.createSchedule(scheduleDTO);
+        LocalDate date = scheduleDTO.getDate();
 
+        EmployeeRequestDTO edto = new EmployeeRequestDTO();
+        edto.setDate(date);
+        edto.setSkills(scheduleDTO.getActivities());
+        List<Employee> employees = employeeService.findEmployeesForService(edto);
+        List<Long> eids = new ArrayList<>();
+        for (Employee employee : employees) {
+            if (employee.getDaysAvailable().contains(date.getDayOfWeek())) {
+                eids.add(employee.getId());
+            }
+        }
+        Schedule schedule = scheduleService.createSchedule(scheduleDTO);
         ScheduleDTO dto = new ScheduleDTO();
-        dto.setEmployeeIds(new ArrayList<>(schedule.getEmployeeIds()));
+        dto.setEmployeeIds(new ArrayList<>(eids));
         dto.setId(schedule.getId());
         dto.setPetIds(new ArrayList<>(schedule.getPetIds()));
         dto.setActivities(schedule.getScheduledAcitivies());
